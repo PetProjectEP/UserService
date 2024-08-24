@@ -3,7 +3,8 @@ class SessionsController < ApplicationController
 
   def show
     if @session
-      render json: { name: @session.user.name }
+      @user = User.find(@session[:user_id])
+      render json: @user.to_json(only: %i[name surname id])
     else
       render json: { error: "Token is invalid" }, status: :unprocessable_entity
     end
