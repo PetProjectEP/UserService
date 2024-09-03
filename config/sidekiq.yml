@@ -1,0 +1,4 @@
+:scheduler:
+  :schedule:
+    DeleteExpiredTokensJob:
+      every: '12h'
