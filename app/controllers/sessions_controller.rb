@@ -1,10 +1,14 @@
 class SessionsController < ApplicationController
   before_action :set_session, only: %i[ show destroy ]
 
+  # Returns user by auth_token in get param
   def show
     if @session
-      @user = User.find(@session[:user_id])
-      render json: @user.to_json(only: %i[name surname id])
+      @user = Rails.cache.fetch(@session[:user_id]) do
+        User.find(@session[:user_id]).slice(:id, :name, :surname) # No need for storing any sensetive info
+      end
+
+      render json: @user.to_json(only: %i[id name surname])
     else
       render json: { error: "Token is invalid" }, status: :unprocessable_entity
     end
