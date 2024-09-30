@@ -2,6 +2,10 @@ require 'rails_helper'
 require 'test_helpers/user_assets'
 
 RSpec.describe User, type: :model do
+  before :all do
+    User.destroy_all
+  end
+
   subject(:user) { UserAssets::get_valid_user_object }
 
   describe "validations," do
