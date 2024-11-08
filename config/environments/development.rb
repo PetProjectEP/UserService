@@ -17,7 +17,8 @@ Rails.application.configure do
   # Enable server timing
   config.server_timing = true
 
-  config.cache_store = :redis_cache_store, { url: "127.0.0.1:6379" }
+  config.action_controller.perform_caching = true
+  config.cache_store = :redis_cache_store, { url: "redis://localhost:6379/" }
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
