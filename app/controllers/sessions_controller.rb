@@ -1,12 +1,9 @@
 class SessionsController < ApplicationController
   before_action :set_session, only: %i[ show destroy ]
+  before_action :verify_session_existence, only: %i[ show destroy ]
 
   # Returns user by auth_token in get param
   def show
-    unless @session
-      render json: { error: "Token is invalid" }, status: :unprocessable_entity
-    end
-
     @user = Rails.cache.fetch(@session[:user_id]) do
       User.find(@session[:user_id]).slice(:id, :name, :surname) # No need for storing any sensetive info
     end
@@ -19,6 +16,7 @@ class SessionsController < ApplicationController
 
     unless @user && @user.authenticate(auth_params[:password])
       render json: { error: "Authentication data are invalid" }, status: :unprocessable_entity
+      return
     end
 
     @session = Session.new(user_id: @user.id)
@@ -31,10 +29,6 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    unless @session
-      render json: { error: "Session cant be found" }, status: :unprocessable_entity
-    end
-
     if @session.destroy!
       render json: { success: "Session is terminated" }
     else
@@ -49,5 +43,13 @@ class SessionsController < ApplicationController
 
     def auth_params
       params.require(:user).permit(:nickname, :password)
+    end
+
+    def verify_session_existence
+      unless @session
+        render json: { error: "Session cant be found" }, status: :unprocessable_entity
+        return false
+      end
+      return true
     end
 end
