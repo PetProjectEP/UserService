@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
 
   # Returns user by auth_token in get param
   def show
-    @user = Rails.cache.fetch(@session[:user_id]) do
+    @user = Rails.cache.fetch(@session[:id]) do
       User.find(@session[:user_id]).slice(:id, :name, :surname) # No need for storing any sensetive info
     end
 
@@ -30,6 +30,7 @@ class SessionsController < ApplicationController
 
   def destroy
     if @session.destroy!
+      Rails.cache.delete(@session[:id])
       render json: { success: "Session is terminated" }
     else
       render json: @session.errors, status: :unprocessable_entity
