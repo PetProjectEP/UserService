@@ -51,6 +51,11 @@ RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
 USER rails:rails
 
+# Set deployment envs
+ENV USER_SERVICE_DATABASE_USERNAME=user_service \
+    REDIS_JOBS_DB=/0 \
+    REDIS_CACHE_DB=/1
+
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 

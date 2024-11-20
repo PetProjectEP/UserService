@@ -50,6 +50,8 @@ test:
 #
 production:
   <<: *default
-  database: user_service_production
-  username: user_service
+  database: tj_production
+  host: <%= ENV["USER_SERVICE_DATABASE_HOST"] %>
+  port: <%= ENV["USER_SERVICE_DATABASE_PORT"] %>
+  username: <%= ENV["USER_SERVICE_DATABASE_USERNAME"] %>
   password: <%= ENV["USER_SERVICE_DATABASE_PASSWORD"] %>
